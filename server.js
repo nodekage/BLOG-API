@@ -25,11 +25,11 @@ app.use('/categories', categoryRoute)
 
 
 app.get('/home', (req, res) => {
-    return res.json({ message: 'Welcome To The Blog!'})
+     res.send({ message: 'Welcome To The Blog!'})
 })
 
 
 app.listen(PORT, () => {
-    console.log("backes running", PORT)
+   // console.log("backes running", PORT)
 })
 
