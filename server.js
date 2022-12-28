@@ -1,10 +1,10 @@
 const express = require('express')
 // const jwt = require("jsonwebtoken")
-const authRoute = require('./routes/auth')
-const userRoute = require('./routes/users')
-const postRoute = require('./routes/posts')
-const categoryRoute = require('./routes/categories')
-const pagination = require('./helpers/pagination')
+const authRoute = require('./src/routes/auth')
+const userRoute = require('./src/routes/users')
+const postRoute = require('./src/routes/posts')
+const categoryRoute = require('./src/routes/categories')
+const pagination = require('./src/helpers/pagination')
 
 
 require('dotenv').config()
@@ -24,12 +24,12 @@ app.use('/categories', categoryRoute)
 
 
 
-app.get('/home', (req, res) => {
+app.get('/', (req, res) => {
      res.send({ message: 'Welcome To The Blog!'})
 })
 
 
 app.listen(PORT, () => {
-   // console.log("backes running", PORT)
+    console.log("backes running", PORT)
 })
 
