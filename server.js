@@ -1,26 +1,38 @@
 const express = require('express')
+// const bodyParser = require('body-parser')
 // const jwt = require("jsonwebtoken")
-const authRoute = require('./src/routes/auth')
-const userRoute = require('./src/routes/users')
-const postRoute = require('./src/routes/posts')
-const categoryRoute = require('./src/routes/categories')
-const pagination = require('./src/helpers/pagination')
+const CONFIG = require("./config/config")
+
+// ROUTES
+const authRoute = require('./routes/auth')
+const userRoute = require('./routes/users')
+const postRoute = require('./routes/posts')
+const categoryRoute = require('./routes/categories')
+const pagination = require('./helpers/pagination')
 
 
-require('dotenv').config()
-require('./db/db').connectToMongoDB()
+require('./db/mongoDb').connectToMongoDB()
 
 const app = express()
-PORT = process.env.PORT || 5000
+
+// Error Handler Middleware
+app.use((err, req, res, next) => {
+    console.log(err)
+    const errStatus = err.status || 500
+    res.status(errStatus).send(err.message)
+    next()
+})
+
+
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json())
 
 app.use(pagination)
-app.use('/auth', authRoute)
-app.use('/users', userRoute)
-app.use('/posts', postRoute)
-app.use('/categories', categoryRoute)
+app.use('/api/v1/auth', authRoute)
+app.use('/api/v1/users', userRoute)
+app.use('/api/v1/posts', postRoute)
+app.use('/api/v1/categories', categoryRoute)
 
 
 
@@ -29,7 +41,7 @@ app.get('/', (req, res) => {
 })
 
 
-app.listen(PORT, () => {
-    console.log("backes running", PORT)
+app.listen(CONFIG.PORT, () => {
+    console.log(`Server running on ${CONFIG.PORT}`)
 })
 

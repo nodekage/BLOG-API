@@ -1,7 +1,8 @@
 const router = require('express').Router()
-const Post = require('../models/Post')
+const Post = require('../models/post')
 const { estimatedReadingTime} = require('../helpers/readtime')
 const jwt = require("jsonwebtoken")
+const { addPostValidationMw , updatePostValidationMw } = require("../validators/post.validator")
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY
 
@@ -18,22 +19,20 @@ const verify = (req, res, next) => {
             next()
         })
     } else {
-        res.status(401).json("You are not authenticated")
+        res.status(401).json("You are not authenticated!")
     }
 }
 
 
 
 // CREATE POST
-router.post('/create',verify, async (req, res) => {
+router.post('/create',verify, addPostValidationMw, async (req, res) => {
     const newPost = new Post({
 
-        title,
-        description: desc || title,
-        tags,
-        username: username,
-        body,
-        reading_time: estimatedReadingTime(body)
+        title : req.body.title,
+        description: req.body.description || title,
+        username: req.body.username,
+        body : req.body.body,
 
     })
     try {
@@ -47,7 +46,7 @@ router.post('/create',verify, async (req, res) => {
 
 
 // UPDATE POST
-router.put('/:id',verify, async (req, res) => {
+router.put('/:id',verify, updatePostValidationMw, async (req, res) => {
     try {
         const post = await Post.findById(req.params.id)
         if (post.username === req.body.username) {
@@ -70,6 +69,7 @@ router.put('/:id',verify, async (req, res) => {
 
 
 // DELETE POST
+
 router.delete('/:id',verify, async (req, res) => {
     try {
         const post = await Post.findById(req.params.id)
@@ -88,15 +88,17 @@ router.delete('/:id',verify, async (req, res) => {
     }
 })
 
-// GET POST
+// GET POST BY ID
 router.get('/:id', async (req,res) => {
     try {
         const post = await Post.findById(req.params.id)
-
-        post.read_count += 1
-        await blog.save()
-
-        res.status(200).json(post)
+        if (post) {
+            post.read_count += 1
+            post.save()
+            res.status(200).json(post)
+        } else {
+            res.status(404).json("Post not Found")
+        }
     }catch(err){
         res.status(500).json(err)
     }
