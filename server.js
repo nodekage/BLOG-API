@@ -8,7 +8,7 @@ const pagination = require('./src/helpers/pagination')
 
 
 require('dotenv').config()
-require('./db').connectToMongoDB()
+require('./db/db').connectToMongoDB()
 
 const app = express()
 PORT = process.env.PORT || 5000
